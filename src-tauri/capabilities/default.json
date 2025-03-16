@@ -1,0 +1,25 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "fs:default",
+    "fs:allow-temp-write",
+    "fs:scope-temp",
+    "os:default",
+    {
+      "identifier": "fs:scope",
+      "allow": [{"path":"$TEMP/**"},{ "path": "$APPCONFIG/**" },{"path":"$APPDATA/**"},{"path":"$APPLOG/**"},{"path":"$APPCACHE/**"},{ "path": "$AUDIO/**" },{"path":"$APPDATA/**"},{"path":"$DOCUMENT/**"},{"path":"$DOWNLOAD/**"},{"path":"$PICTURE/**"},{"path":"$VIDEO/**"}]
+    },
+    "dialog:allow-open",
+    "dialog:default",
+    "fs:allow-appdata-write",
+    {
+      "identifier": "fs:allow-watch",
+      "allow": [{"path":"$TEMP/**"},{ "path": "$AUDIO/**" },{"path":"$APPDATA/**"},{"path":"$DOCUMENT/**"},{"path":"$DOWNLOAD/**"},{"path":"$PICTURE/**"},{"path":"$VIDEO/**"}]
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+  position: relative;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 80px;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.message-bubble {
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.user .message-bubble {
+  background-color: #e3f2fd;
+  margin-right: 10px;
+}
+
+.ai .message-bubble {
+  background-color: #f5f5f5;
+  margin-left: 10px;
+}
+
+.audio-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.record-button {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  z-index: 1000;
+  width: 200px;
+}
+
+.record-button.recording {
+  background-color: #f44336;
+}
+
+.record-button:hover {
+  opacity: 0.9;
+} 
