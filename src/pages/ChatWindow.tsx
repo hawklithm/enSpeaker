@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import { platform } from '@tauri-apps/plugin-os';
-import  { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { SpeakerIcon } from '../components/Icons';
 import { useParams } from 'react-router-dom';
 import { speechToText, getAIResponse, textToSpeech } from '../services/api';
@@ -13,13 +13,13 @@ interface Message {
 
 const isInTauri = async () => {
   let platform_name = "unknown";
-  try{
+  try {
     platform_name = await platform();
     console.log(platform_name);
-  }catch(e){
+  } catch (e) {
     console.log("not in tauri");
   }
-  return platform_name!=="unknown";
+  return platform_name !== "unknown";
 }
 
 const ChatWindow = () => {
@@ -30,11 +30,11 @@ const ChatWindow = () => {
   const audioChunksRef = useRef<Blob[]>([]);
 
   const startRecording = async () => {
-    if (await isInTauri()) {
-    // Check if running in Tauri
-      await invoke('start_recording', {});
-    } else {
-      try {
+    try {
+      if (await isInTauri()) {
+        // Check if running in Tauri
+        await invoke('start_recording', {});
+      } else {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorderRef.current = new MediaRecorder(stream);
         audioChunksRef.current = [];
@@ -49,10 +49,10 @@ const ChatWindow = () => {
         };
 
         mediaRecorderRef.current.start();
-        setIsRecording(true);
-      } catch (error) {
-        console.error('录音失败:', error);
       }
+      setIsRecording(true);
+    } catch (error) {
+      console.error('录音失败:', error);
     }
   };
 
@@ -61,7 +61,7 @@ const ChatWindow = () => {
     if (mediaRecorderRef.current && isRecording) {
       if (await isInTauri()) {
         await invoke('stop_recording');
-      }else{
+      } else {
         mediaRecorderRef.current.stop();
       }
       setIsRecording(false);
@@ -71,7 +71,7 @@ const ChatWindow = () => {
   const processAudioMessage = async (audioBlob: Blob) => {
     try {
       const userText = await speechToText(audioBlob, scenarioId);
-      
+
       // 添加用户消息
       setMessages(prev => [...prev, {
         type: 'user',
@@ -107,7 +107,7 @@ const ChatWindow = () => {
               {message.text}
             </div>
             {message.audioUrl && (
-              <button 
+              <button
                 className="audio-button"
                 onClick={() => playAudio(message.audioUrl!)}
               >
