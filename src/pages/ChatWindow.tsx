@@ -22,6 +22,24 @@ const isInTauri = async () => {
   return platform_name !== "unknown";
 }
 
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeoutId: number | null = null;
+
+  return function (...args: Parameters<T>) {
+    if (timeoutId) {
+      window.clearTimeout(timeoutId);
+    }
+
+    timeoutId = window.setTimeout(() => {
+      func.apply(null, args);
+      timeoutId = null;
+    }, wait);
+  };
+}
+
 const ChatWindow = () => {
   const { scenarioId } = useParams<{ scenarioId: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -29,11 +47,19 @@ const ChatWindow = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
+  const handleRecordClick = debounce(async () => {
+    if (isRecording) {
+      await stopRecording();
+    } else {
+      await startRecording();
+    }
+  }, 300);  // 300ms 防抖延迟
+
   const startRecording = async () => {
     try {
       if (await isInTauri()) {
-        // Check if running in Tauri
         await invoke('start_recording', {});
+        setIsRecording(true);
       } else {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorderRef.current = new MediaRecorder(stream);
@@ -49,22 +75,23 @@ const ChatWindow = () => {
         };
 
         mediaRecorderRef.current.start();
+        setIsRecording(true);
       }
-      setIsRecording(true);
     } catch (error) {
       console.error('录音失败:', error);
     }
   };
 
   const stopRecording = async () => {
-
-    if (mediaRecorderRef.current && isRecording) {
+    try {
       if (await isInTauri()) {
         await invoke('stop_recording');
-      } else {
+      } else if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
       }
       setIsRecording(false);
+    } catch (error) {
+      console.error('停止录音失败:', error);
     }
   };
 
@@ -119,7 +146,7 @@ const ChatWindow = () => {
       </div>
       <button
         className={`record-button ${isRecording ? 'recording' : ''}`}
-        onClick={isRecording ? stopRecording : startRecording}
+        onClick={handleRecordClick}
       >
         {isRecording ? '停止录音' : '开始录音'}
       </button>

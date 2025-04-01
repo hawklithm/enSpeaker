@@ -65,4 +65,9 @@
 
 .record-button:hover {
   opacity: 0.9;
+}
+
+.record-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 } 
